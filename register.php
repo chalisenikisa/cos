@@ -1,7 +1,7 @@
 <?php
 require_once 'config.php';
 
-// Redirect if already logged in  
+// Redirect if already logged in  change
 if (isLoggedIn()) redirect('index.php');
 
  $errors = [];
