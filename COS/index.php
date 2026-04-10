@@ -23,7 +23,7 @@
             <?php if (isLoggedIn()): ?>
                 <li><a href="my-orders.php">📋 My Orders</a></li>
                 <li>
-                    <button class="cart-btn" onclick="location.href='cart.php'">
+                    <button class="cart-btn" onclick="location.href='../cart.php'">
                         🛒 Cart <span class="cart-badge" style="display:none">0</span>
                     </button>
                 </li>

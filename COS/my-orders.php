@@ -48,7 +48,7 @@ if (!empty($orders)) {
         <ul class="nav-links">
             <li><a href="index.php">Menu</a></li>
             <li>
-                <button class="cart-btn" onclick="location.href='cart.php'">
+                <button class="cart-btn" onclick="location.href='../cart.php'">
                     🛒 Cart <span class="cart-badge" style="display:none">0</span>
                 </button>
             </li>
