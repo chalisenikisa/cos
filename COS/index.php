@@ -23,7 +23,7 @@
             <?php if (isLoggedIn()): ?>
                 <li><a href="my-orders.php">📋 My Orders</a></li>
                 <li>
-                    <a href="../cart.php" class="cart-btn">
+                    <a href="cart.php" class="cart-btn">
                         🛒 Cart <span class="cart-badge" style="display:none">0</span>
                     </a>
                 </li>
@@ -120,6 +120,6 @@
     &copy; <?= date('Y') ?> CanteenOS. Built for hungry students and staff.
 </footer>
 
-<script src="assets/app.js"></script>
+<script src="assets/appli.js"></script>
 </body>
 </html>

@@ -58,9 +58,9 @@ if (!empty($cart)) {
             <li><a href="index.php">Menu</a></li>
             <li><a href="my-orders.php">My Orders</a></li>
             <li>
-                <button class="cart-btn" onclick="location.href='cart.php'">
+                <a href="cart.php" class="cart-btn" style="pointer-events:none;">
                     🛒 Cart <span class="cart-badge"><?= array_sum($cart) ?></span>
-                </button>
+                </a>
             </li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
