@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Item — CanteenOS Admin</title>
+    <title>Add Item — Canteen Food Ordering Admin</title>
     <link rel="stylesheet" href="../assets/style.css">
     <link rel="stylesheet" href="../assets/admin.css">
 </head>
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <nav class="navbar">
     <div class="nav-inner">
         <a href="dashboard.php" class="nav-brand">
-            <div class="nav-brand-icon">🍽</div> CanteenOS
+            <div class="nav-brand-icon">🍽</div> Canteen Food Ordering
             <span style="font-size:0.65rem;background:var(--accent);color:#fff;padding:2px 8px;border-radius:50px;">Admin</span>
         </a>
         <ul class="nav-links">

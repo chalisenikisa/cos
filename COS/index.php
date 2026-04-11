@@ -23,9 +23,9 @@
             <?php if (isLoggedIn()): ?>
                 <li><a href="my-orders.php">📋 My Orders</a></li>
                 <li>
-                    <button class="cart-btn" onclick="location.href='../cart.php'">
+                    <a href="../cart.php" class="cart-btn">
                         🛒 Cart <span class="cart-badge" style="display:none">0</span>
-                    </button>
+                    </a>
                 </li>
                 <li><a href="logout.php">Logout</a></li>
             <?php else: ?>
@@ -103,7 +103,12 @@
                 <p class="desc"><?= sanitize($item['description']) ?></p>
                 <div class="food-card-footer">
                     <span class="food-price"><?= formatPrice($item['price']) ?></span>
-                    <button class="add-cart-btn" data-id="<?= $item['id'] ?>" data-name="<?= sanitize($item['name']) ?>" title="Add to cart">+</button>
+                    <button class="add-cart-btn" data-id="<?= $item['id'] ?>" data-name="<?= sanitize($item['name']) ?>" title="Add to cart">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>

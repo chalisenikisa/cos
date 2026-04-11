@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login — CanteenOS</title>
+    <title>Admin Login — Canteen Food Ordering</title>
     <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <nav class="navbar">
     <div class="nav-inner">
         <a href="../index.php" class="nav-brand">
-            <div class="nav-brand-icon">🍽</div> CanteenOS <span style="font-size:0.7rem;background:var(--accent);color:#fff;padding:2px 8px;border-radius:50px;margin-left:6px;">Admin</span>
+            <div class="nav-brand-icon">🍽</div> Canteen Food Ordering <span style="font-size:0.7rem;background:var(--accent);color:#fff;padding:2px 8px;border-radius:50px;margin-left:6px;">Admin</span>
         </a>
     </div>
 </nav>

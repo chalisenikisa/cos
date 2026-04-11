@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout — CanteenOS</title>
+    <title>Checkout — Canteen Food Ordering</title>
     <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <nav class="navbar">
     <div class="nav-inner">
         <a href="index.php" class="nav-brand">
-            <div class="nav-brand-icon">🍽</div> CanteenOS
+            <div class="nav-brand-icon">🍽</div> Canteen Food Ordering
         </a>
     </div>
 </nav>

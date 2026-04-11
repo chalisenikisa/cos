@@ -36,7 +36,7 @@ if (!empty($orders)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Orders — CanteenOS</title>
+    <title>My Orders — Canteen Food Ordering</title>
     <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -44,7 +44,7 @@ if (!empty($orders)) {
 <nav class="navbar">
     <div class="nav-inner">
         <a href="index.php" class="nav-brand">
-            <div class="nav-brand-icon">🍽</div> CanteenOS
+            <div class="nav-brand-icon">🍽</div> Canteen Food Ordering
         </a>
         <ul class="nav-links">
             <li><a href="index.php">Menu</a></li>
