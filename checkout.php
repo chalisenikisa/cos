@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 </div>
 
-<footer class="footer">&copy; <?= date('Y') ?> CanteenOS</footer>
+<footer class="footer">&copy; <?= date('Y') ?> Canteen Food Ordering</footer>
 <script src="assets/app.js"></script>
 </body>
 </html>

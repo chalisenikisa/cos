@@ -102,7 +102,7 @@ if (!empty($orders)) {
 </div>
 <?php endif; ?>
 
-<footer class="footer">&copy; <?= date('Y') ?> CanteenOS. Built for hungry students and staff.</footer>
+<footer class="footer">&copy; <?= date('Y') ?> Canteen Food Ordering. Built for hungry students and staff.</footer>
 
 </body>
 </html>

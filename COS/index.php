@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CanteenOS — Order Fresh, Eat Well</title>
+    <title>Canteen Food Ordering — Order Fresh, Eat Well</title>
     <link rel="stylesheet" href="assets/style.css">
     <style>
         .food-emoji { font-size: 3.5rem; line-height: 1; }
@@ -17,15 +17,15 @@
     <div class="nav-inner">
         <a href="index.php" class="nav-brand">
             <div class="nav-brand-icon">🍽</div>
-            CanteenOS
+            Canteen Food Ordering
         </a>
         <ul class="nav-links">
             <?php if (isLoggedIn()): ?>
                 <li><a href="my-orders.php">📋 My Orders</a></li>
                 <li>
-                    <a href="cart.php" class="cart-btn">
+                    <button class="cart-btn" id="cart-toggle">
                         🛒 Cart <span class="cart-badge" style="display:none">0</span>
-                    </a>
+                    </button>
                 </li>
                 <li><a href="logout.php">Logout</a></li>
             <?php else: ?>
@@ -117,7 +117,7 @@
 </section>
 
 <footer class="footer">
-    &copy; <?= date('Y') ?> CanteenOS. Built for hungry students and staff.
+    &copy; <?= date('Y') ?> Canteen Food Ordering. Built for hungry students and staff.
 </footer>
 
 <script src="assets/appli.js"></script>
