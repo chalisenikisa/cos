@@ -123,6 +123,6 @@ if (!empty($cart)) {
 <?php endif; ?>
 
 <footer class="footer">&copy; <?= date('Y') ?> Canteen Food Ordering</footer>
-<script src="assets/app.js"></script>
+<script src="COS/assets/appli.js"></script>
 </body>
 </html>

@@ -27,10 +27,11 @@
                         🛒 Cart <span class="cart-badge" style="display:none">0</span>
                     </button>
                 </li>
-                <li><a href="logout.php">Logout</a></li>
+                <li><a href="../logout.php" class="cart-btn">Logout</a></li>
             <?php else: ?>
                 <li><a href="login.php">Sign In</a></li>
                 <li><a href="register.php" class="btn-primary btn-sm">Create Account</a></li>
+                <li><a href="admin/login.php" class="btn-primary btn-sm">Admin Panel</a></li>
             <?php endif; ?>
         </ul>
     </div>
@@ -123,29 +124,3 @@
 <script src="assets/appli.js"></script>
 </body>
 </html>
-
-<!-- CART DRAWER -->
-<div class="cart-drawer" id="cart-drawer">
-    <div class="cart-drawer-overlay" id="cart-overlay"></div>
-    <div class="cart-drawer-panel">
-        <div class="cart-drawer-header">
-            <h2>Your Cart <span class="cart-drawer-count" id="drawer-count">(0)</span></h2>
-            <button class="cart-drawer-close" id="cart-close">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-        </div>
-        <div class="cart-drawer-body" id="cart-drawer-body">
-            <div class="cart-drawer-loading">Loading...</div>
-        </div>
-        <div class="cart-drawer-footer" id="cart-drawer-footer" style="display:none;">
-            <div class="cart-drawer-subtotal">
-                <span>Subtotal</span>
-                <span class="cart-drawer-total" id="drawer-subtotal">₹0</span>
-            </div>
-            <a href="cart.php" class="btn-primary" style="width:100%;justify-content:center;">View Cart & Checkout</a>
-        </div>
-    </div>
-</div>

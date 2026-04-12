@@ -52,7 +52,7 @@ if (!empty($orders)) {
                     🛒 Cart <span class="cart-badge" style="display:none">0</span>
                 </a>
             </li>
-            <li><a href="logout.php">Logout</a></li>
+            <li><a href="../logout.php">Logout</a></li>
         </ul>
     </div>
 </nav>

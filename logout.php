@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/COS/config.php';
-$_SESSION = [];
+$_SESSION = array();
 session_destroy();
-redirect('COS/index.php');
+session_start();
+session_regenerate_id(true);
+redirect('index.php');

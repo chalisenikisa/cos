@@ -68,6 +68,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     loadCartCount();
 
+    // ---- Cart toggle button ----
+    const cartToggle = document.getElementById('cart-toggle');
+    if (cartToggle) {
+        cartToggle.addEventListener('click', () => {
+            window.location.href = 'cart.php';
+        });
+    }
+
     // ---- Category filter ----
     const catBtns = document.querySelectorAll('.cat-btn');
     const foodCards = document.querySelectorAll('.food-card');

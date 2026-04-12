@@ -4,6 +4,7 @@ requireAdmin();
 
  $categories = $pdo->query("SELECT * FROM categories ORDER BY name")->fetchAll();
  $errors = [];
+ $days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $catId = (int)($_POST['category_id'] ?? 0);
@@ -11,14 +12,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $desc = sanitize($_POST['description'] ?? '');
     $price = floatval($_POST['price'] ?? 0);
     $available = isset($_POST['is_available']) ? 1 : 0;
+    $selectedDays = isset($_POST['days']) && is_array($_POST['days']) ? implode(',', array_map('intval', $_POST['days'])) : '0,1,2,3,4,5,6';
 
     if ($catId <= 0) $errors[] = 'Select a category.';
     if (empty($name)) $errors[] = 'Item name is required.';
     if ($price <= 0) $errors[] = 'Price must be greater than zero.';
 
     if (empty($errors)) {
-        $stmt = $pdo->prepare("INSERT INTO menu_items (category_id, name, description, price, is_available) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$catId, $name, $desc, $price, $available]);
+        $stmt = $pdo->prepare("INSERT INTO menu_items (category_id, name, description, price, is_available, available_days) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$catId, $name, $desc, $price, $available, $selectedDays]);
         flash('success', 'Item added successfully.');
         redirect('manage-menu.php');
     }
