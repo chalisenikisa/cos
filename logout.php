@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
- $_SESSION = [];
+require_once __DIR__ . '/COS/config.php';
+$_SESSION = [];
 session_destroy();
-redirect('index.php');
+redirect('COS/index.php');

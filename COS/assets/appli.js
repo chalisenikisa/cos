@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const cat = this.dataset.category;
 
             foodCards.forEach(card => {
-                if (cat === 'all' || card.dataset.category === cat) {
+                if (cat === 'all' || card.dataset.category == cat) {
                     card.style.display = '';
                     card.style.animation = 'fadeUp 0.35s ease forwards';
                 } else {
