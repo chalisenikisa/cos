@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 10, 2026 at 03:02 AM
+-- Generation Time: Apr 12, 2026 at 06:13 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,7 +39,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `username`, `password`, `created_at`) VALUES
-(1, 'admin', '$2y$10$YourHashedPasswordHereUsePHPpassword_hash', '2026-04-10 00:59:54');
+(1, 'admin', '123admin', '2026-04-10 00:59:54');
 
 -- --------------------------------------------------------
 
@@ -82,9 +82,6 @@ CREATE TABLE `customers` (
 
 -- --------------------------------------------------------
 
--- Migration: Add available_days column (run this on existing databases)
--- ALTER TABLE `menu_items` ADD COLUMN `available_days` VARCHAR(20) DEFAULT '0,1,2,3,4,5,6' AFTER `is_available`;
-
 --
 -- Table structure for table `menu_items`
 --
@@ -97,7 +94,6 @@ CREATE TABLE `menu_items` (
   `price` decimal(10,2) NOT NULL,
   `image` varchar(255) DEFAULT 'default-food.jpg',
   `is_available` tinyint(1) DEFAULT 1,
-  `available_days` varchar(20) DEFAULT '0,1,2,3,4,5,6',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -105,28 +101,28 @@ CREATE TABLE `menu_items` (
 -- Dumping data for table `menu_items`
 --
 
-INSERT INTO `menu_items` (`id`, `category_id`, `name`, `description`, `price`, `image`, `is_available`, `available_days`, `created_at`) VALUES
-(1, 1, 'Chicken Adobo Rice', 'Classic Filipino adobo served with steamed rice', 75.00, 'chicken-adobo.jpg', 1, '0,1,2,3,4,5,6', '2026-04-10 00:59:54'),
-(2, 1, 'Pork Sinigang Rice', 'Sour and savory pork soup with rice', 85.00, 'sinigang.jpg', 1, '0,1,2,3,4,5,6', '2026-04-10 00:59:54'),
-(3, 1, 'Bistek Rice', 'Beef steak with onion rings and rice', 90.00, 'bistek.jpg', 1, '0,1,2,3,4,5,6', '2026-04-10 00:59:54'),
-(4, 1, 'Tapsilog', 'Marinated beef, fried egg, and garlic rice', 70.00, 'tapsilog.jpg', 1, '1,2,3,4,5', '2026-04-10 00:59:54'),
-(5, 1, 'Longsilog', 'Longanisa, fried egg, and garlic rice', 65.00, 'longsilog.jpg', 1, '1,2,3,4,5', '2026-04-10 00:59:54'),
-(6, 2, 'Pancit Canton', 'Stir-fried egg noodles with vegetables and shrimp', 60.00, 'pancit.jpg', 1, '0,1,2,3,4,5,6', '2026-04-10 00:59:54'),
-(7, 2, 'Lomi', 'Thick egg noodle soup with meat and vegetables', 55.00, 'lomi.jpg', 1, '0,1,2,3,4,5,6', '2026-04-10 00:59:54'),
-(8, 2, 'Batchoy', 'Ilonggo noodle soup with pork organs and crushed crackers', 60.00, 'batchoy.jpg', 1, '0,1,2,3,4,5,6', '2026-04-10 00:59:54'),
-(9, 3, 'Lumpia Shanghai', 'Crispy fried spring rolls filled with pork', 50.00, 'lumpia.jpg', 1, '0,1,2,3,4,5,6', '2026-04-10 00:59:54'),
-(10, 3, 'French Fries', 'Crispy golden fries with ketchup', 45.00, 'fries.jpg', 1, '0,1,2,3,4,5,6', '2026-04-10 00:59:54'),
-(11, 3, 'Chicken Wings', '6 pieces of seasoned fried chicken wings', 80.00, 'wings.jpg', 1, '0,1,2,3,4,5,6', '2026-04-10 00:59:54'),
-(12, 3, 'Fishballs', 'Street-style fishballs with spicy sauce', 30.00, 'fishballs.jpg', 1, '0,1,2,3,4', '2026-04-10 00:59:54'),
-(13, 4, 'Iced Tea', 'Refreshing cold tea with lemon', 25.00, 'iced-tea.jpg', 1, '0,1,2,3,4,5,6', '2026-04-10 00:59:54'),
-(14, 4, 'Buko Juice', 'Fresh coconut juice served cold', 30.00, 'buko.jpg', 1, '0,1,2,3,4,5,6', '2026-04-10 00:59:54'),
-(15, 4, 'Coffee', 'Hot brewed coffee', 20.00, 'coffee.jpg', 1, '0,1,2,3,4,5,6', '2026-04-10 00:59:54'),
-(16, 4, 'Milk Tea', 'Creamy milk tea with tapioca pearls', 40.00, 'milktea.jpg', 1, '0,1,2,3,4,5,6', '2026-04-10 00:59:54'),
-(17, 5, 'Leche Flan', 'Creamy caramel custard', 40.00, 'leche-flan.jpg', 1, '0,1,2,3,4,5,6', '2026-04-10 00:59:54'),
-(18, 5, 'Halo-Halo', 'Mixed Filipino dessert with shaved ice and milk', 55.00, 'halo-halo.jpg', 1, '0,1,2,3,4,5,6', '2026-04-10 00:59:54'),
-(19, 6, 'Ham & Cheese Sandwich', 'Toasted sandwich with ham and melted cheese', 50.00, 'ham-cheese.jpg', 1, '1,2,3,4,5', '2026-04-10 00:59:54'),
-(20, 6, 'Egg Sandwich', 'Fluffy egg salad sandwich', 40.00, 'egg-sandwich.jpg', 1, '1,2,3,4,5', '2026-04-10 00:59:54'),
-(21, 6, 'Tuna Sandwich', 'Tuna mayo sandwich with lettuce', 45.00, 'tuna-sandwich.jpg', 1, '1,2,3,4,5', '2026-04-10 00:59:54');
+INSERT INTO `menu_items` (`id`, `category_id`, `name`, `description`, `price`, `image`, `is_available`, `created_at`) VALUES
+(1, 1, 'Chicken Adobo Rice', 'Classic Filipino adobo served with steamed rice', 75.00, 'chicken-adobo.jpg', 1, '2026-04-10 00:59:54'),
+(2, 1, 'Pork Sinigang Rice', 'Sour and savory pork soup with rice', 85.00, 'sinigang.jpg', 1, '2026-04-10 00:59:54'),
+(3, 1, 'Bistek Rice', 'Beef steak with onion rings and rice', 90.00, 'bistek.jpg', 1, '2026-04-10 00:59:54'),
+(4, 1, 'Tapsilog', 'Marinated beef, fried egg, and garlic rice', 70.00, 'tapsilog.jpg', 1, '2026-04-10 00:59:54'),
+(5, 1, 'Longsilog', 'Longanisa, fried egg, and garlic rice', 65.00, 'longsilog.jpg', 1, '2026-04-10 00:59:54'),
+(6, 2, 'Pancit Canton', 'Stir-fried egg noodles with vegetables and shrimp', 60.00, 'pancit.jpg', 1, '2026-04-10 00:59:54'),
+(7, 2, 'Lomi', 'Thick egg noodle soup with meat and vegetables', 55.00, 'lomi.jpg', 1, '2026-04-10 00:59:54'),
+(8, 2, 'Batchoy', 'Ilonggo noodle soup with pork organs and crushed crackers', 60.00, 'batchoy.jpg', 1, '2026-04-10 00:59:54'),
+(9, 3, 'Lumpia Shanghai', 'Crispy fried spring rolls filled with pork', 50.00, 'lumpia.jpg', 1, '2026-04-10 00:59:54'),
+(10, 3, 'French Fries', 'Crispy golden fries with ketchup', 45.00, 'fries.jpg', 1, '2026-04-10 00:59:54'),
+(11, 3, 'Chicken Wings', '6 pieces of seasoned fried chicken wings', 80.00, 'wings.jpg', 1, '2026-04-10 00:59:54'),
+(12, 3, 'Fishballs', 'Street-style fishballs with spicy sauce', 30.00, 'fishballs.jpg', 1, '2026-04-10 00:59:54'),
+(13, 4, 'Iced Tea', 'Refreshing cold tea with lemon', 25.00, 'iced-tea.jpg', 1, '2026-04-10 00:59:54'),
+(14, 4, 'Buko Juice', 'Fresh coconut juice served cold', 30.00, 'buko.jpg', 1, '2026-04-10 00:59:54'),
+(15, 4, 'Coffee', 'Hot brewed coffee', 20.00, 'coffee.jpg', 1, '2026-04-10 00:59:54'),
+(16, 4, 'Milk Tea', 'Creamy milk tea with tapioca pearls', 40.00, 'milktea.jpg', 1, '2026-04-10 00:59:54'),
+(17, 5, 'Leche Flan', 'Creamy caramel custard', 40.00, 'leche-flan.jpg', 1, '2026-04-10 00:59:54'),
+(18, 5, 'Halo-Halo', 'Mixed Filipino dessert with shaved ice and milk', 55.00, 'halo-halo.jpg', 1, '2026-04-10 00:59:54'),
+(19, 6, 'Ham & Cheese Sandwich', 'Toasted sandwich with ham and melted cheese', 50.00, 'ham-cheese.jpg', 1, '2026-04-10 00:59:54'),
+(20, 6, 'Egg Sandwich', 'Fluffy egg salad sandwich', 40.00, 'egg-sandwich.jpg', 1, '2026-04-10 00:59:54'),
+(21, 6, 'Tuna Sandwich', 'Tuna mayo sandwich with lettuce', 45.00, 'tuna-sandwich.jpg', 1, '2026-04-10 00:59:54');
 
 -- --------------------------------------------------------
 
