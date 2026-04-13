@@ -83,6 +83,7 @@
             SELECT m.*, c.name AS category_name
             FROM menu_items m
             JOIN categories c ON m.category_id = c.id
+            WHERE m.is_available = 1 AND (m.day_of_week IS NULL OR FIND_IN_SET('" . date('w') . "', m.day_of_week) > 0)
             ORDER BY c.name, m.name
         ")->fetchAll();
 

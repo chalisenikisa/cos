@@ -8,6 +8,8 @@ requireAdmin();
     JOIN categories c ON m.category_id = c.id
     ORDER BY c.name, m.name
 ")->fetchAll();
+
+$dayLabels = ['0' => 'Sun', '1' => 'Mon', '2' => 'Tue', '3' => 'Wed', '4' => 'Thu', '5' => 'Fri', '6' => 'Sat'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -60,6 +62,7 @@ requireAdmin();
                         <th>Name</th>
                         <th>Category</th>
                         <th>Price</th>
+                        <th>Days</th>
                         <th>Available</th>
                         <th>Actions</th>
                     </tr>
@@ -70,6 +73,17 @@ requireAdmin();
                         <td><strong><?= sanitize($item['name']) ?></strong></td>
                         <td><?= sanitize($item['category_name']) ?></td>
                         <td><?= formatPrice($item['price']) ?></td>
+                        <td>
+                            <?php
+                            $itemDays = isset($item['day_of_week']) && $item['day_of_week'] ? explode(',', $item['day_of_week']) : [];
+                            if (empty($itemDays)): ?>
+                                <span style="color:#888;">All days</span>
+                            <?php else: ?>
+                                <?php foreach ($itemDays as $d): ?>
+                                    <span style="background:var(--primary);color:#fff;padding:2px 6px;border-radius:4px;font-size:0.75rem;margin-right:2px;"><?= $dayLabels[$d] ?></span>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </td>
                         <td>
                             <?php if ($item['is_available']): ?>
                                 <span style="color:var(--success);font-weight:600;">Yes</span>

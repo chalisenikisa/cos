@@ -39,7 +39,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `username`, `password`, `created_at`) VALUES
-(1, 'admin', '123admin', '2026-04-10 00:59:54');
+(1, 'admin', 'admin123', '2026-04-10 00:59:54');
 
 -- --------------------------------------------------------
 
@@ -94,6 +94,7 @@ CREATE TABLE `menu_items` (
   `price` decimal(10,2) NOT NULL,
   `image` varchar(255) DEFAULT 'default-food.jpg',
   `is_available` tinyint(1) DEFAULT 1,
+  `day_of_week` set('0','1','2','3','4','5','6') DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

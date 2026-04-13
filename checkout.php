@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $payment = sanitize($_POST['payment_method'] ?? 'cash');
     $notes = sanitize($_POST['notes'] ?? '');
 
-    if (!in_array($payment, ['cash', 'gcash', 'card'])) {
+    if (!in_array($payment, ['cash', 'gcash', 'card', 'esewa'])) {
         $errors[] = 'Invalid payment method.';
     }
 
@@ -99,6 +99,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="radio" name="payment_method" value="card">
                 💳 Card
             </label>
+            <label class="payment-option">
+                <input type="radio" name="payment_method" value="esewa">
+                📲 eSewa
+            </label>
+        </div>
+
+        <div id="esewa-qr" class="esewa-qr-section" style="display:none;">
+            <div style="background:var(--card);border-radius:var(--radius);padding:20px;text-align:center;margin-bottom:20px;box-shadow:var(--shadow);">
+                <h4 style="margin:0 0 15px 0;">Scan to Pay with eSewa</h4>
+                <img src="assets/esewa-qr.png" alt="eSewa QR Code" style="max-width:200px;width:100%;border-radius:8px;">
+                <p style="margin:15px 0 5px 0;font-size:0.9rem;color:var(--text-light);">Total Amount: <strong><?= formatPrice($total) ?></strong></p>
+                <p style="margin:0;font-size:0.85rem;color:var(--text-light);">Send payment screenshot as proof</p>
+            </div>
+            <div class="form-group">
+                <label for="payment_proof">Payment Screenshot/Reference (optional)</label>
+                <input type="text" id="payment_proof" name="payment_proof" placeholder="Enter transaction ID or note">
+            </div>
         </div>
 
         <div class="form-group">
@@ -118,6 +135,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <footer class="footer">&copy; <?= date('Y') ?> Canteen Food Ordering</footer>
-<script src="assets/app.js"></script>
+<script>
+document.querySelectorAll('input[name="payment_method"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('.payment-option').forEach(function(opt) { opt.classList.remove('selected'); });
+        this.closest('.payment-option').classList.add('selected');
+        var qrSection = document.getElementById('esewa-qr');
+        qrSection.style.display = this.value === 'esewa' ? 'block' : 'none';
+    });
+});
+</script>
 </body>
 </html>

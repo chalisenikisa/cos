@@ -12,6 +12,8 @@ if (!$item) redirect('manage-menu.php');
 
  $categories = $pdo->query("SELECT * FROM categories ORDER BY name")->fetchAll();
  $errors = [];
+ $days = ['0' => 'Sunday', '1' => 'Monday', '2' => 'Tuesday', '3' => 'Wednesday', '4' => 'Thursday', '5' => 'Friday', '6' => 'Saturday'];
+ $selectedDays = $item['day_of_week'] ? explode(',', $item['day_of_week']) : [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $catId = (int)($_POST['category_id'] ?? 0);
@@ -19,14 +21,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $desc = sanitize($_POST['description'] ?? '');
     $price = floatval($_POST['price'] ?? 0);
     $available = isset($_POST['is_available']) ? 1 : 0;
+    $dayOfWeek = isset($_POST['day_of_week']) ? implode(',', $_POST['day_of_week']) : null;
 
     if ($catId <= 0) $errors[] = 'Select a category.';
     if (empty($name)) $errors[] = 'Item name is required.';
     if ($price <= 0) $errors[] = 'Price must be greater than zero.';
 
     if (empty($errors)) {
-        $stmt = $pdo->prepare("UPDATE menu_items SET category_id=?, name=?, description=?, price=?, is_available=? WHERE id=?");
-        $stmt->execute([$catId, $name, $desc, $price, $available, $id]);
+        $stmt = $pdo->prepare("UPDATE menu_items SET category_id=?, name=?, description=?, price=?, is_available=?, day_of_week=? WHERE id=?");
+        $stmt->execute([$catId, $name, $desc, $price, $available, $dayOfWeek, $id]);
         flash('success', 'Item updated successfully.');
         redirect('manage-menu.php');
     }
@@ -103,6 +106,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <input type="checkbox" name="is_available" value="1" <?= $item['is_available'] ? 'checked' : '' ?> style="width:18px;height:18px;">
                             Available
                         </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Available Days (leave empty for all days)</label>
+                    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;">
+                        <?php foreach ($days as $val => $label): ?>
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                            <input type="checkbox" name="day_of_week[]" value="<?= $val ?>" <?= in_array($val, $selectedDays) ? 'checked' : '' ?> style="width:16px;height:16px;">
+                            <?= $label ?>
+                        </label>
+                        <?php endforeach; ?>
                     </div>
                 </div>
                 <button type="submit" class="btn-primary" style="margin-top:8px;">Save Changes</button>

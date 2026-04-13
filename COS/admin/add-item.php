@@ -3,8 +3,8 @@ require_once '../config.php';
 requireAdmin();
 
  $categories = $pdo->query("SELECT * FROM categories ORDER BY name")->fetchAll();
- $errors = [];
- $days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+$errors = [];
+$days = ['0' => 'Sunday', '1' => 'Monday', '2' => 'Tuesday', '3' => 'Wednesday', '4' => 'Thursday', '5' => 'Friday', '6' => 'Saturday'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $catId = (int)($_POST['category_id'] ?? 0);
@@ -12,15 +12,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $desc = sanitize($_POST['description'] ?? '');
     $price = floatval($_POST['price'] ?? 0);
     $available = isset($_POST['is_available']) ? 1 : 0;
-    $selectedDays = isset($_POST['days']) && is_array($_POST['days']) ? implode(',', array_map('intval', $_POST['days'])) : '0,1,2,3,4,5,6';
+    $dayOfWeek = isset($_POST['day_of_week']) ? implode(',', $_POST['day_of_week']) : null;
 
     if ($catId <= 0) $errors[] = 'Select a category.';
     if (empty($name)) $errors[] = 'Item name is required.';
     if ($price <= 0) $errors[] = 'Price must be greater than zero.';
 
     if (empty($errors)) {
-        $stmt = $pdo->prepare("INSERT INTO menu_items (category_id, name, description, price, is_available, available_days) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$catId, $name, $desc, $price, $available, $selectedDays]);
+        $stmt = $pdo->prepare("INSERT INTO menu_items (category_id, name, description, price, is_available, day_of_week) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$catId, $name, $desc, $price, $available, $dayOfWeek]);
         flash('success', 'Item added successfully.');
         redirect('manage-menu.php');
     }
@@ -97,6 +97,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <input type="checkbox" name="is_available" value="1" checked style="width:18px;height:18px;">
                             Available
                         </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="day_of_week">Available Days (leave empty for all days)</label>
+                    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;">
+                        <?php foreach ($days as $val => $label): ?>
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                            <input type="checkbox" name="day_of_week[]" value="<?= $val ?>" style="width:16px;height:16px;">
+                            <?= $label ?>
+                        </label>
+                        <?php endforeach; ?>
                     </div>
                 </div>
                 <button type="submit" class="btn-primary" style="margin-top:8px;">Add Item</button>
