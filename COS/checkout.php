@@ -1,22 +1,21 @@
 <?php
-require_once 'COS/config.php';
+require_once 'config.php';
 requireLogin();
 
- $cart = $_SESSION['cart'] ?? [];
-if (empty($cart)) redirect('cart.php');
+$cart = $_SESSION['cart'] ?? [];
+if (empty($cart)) redirect('../cart.php');
 
-// Calculate total
- $placeholders = implode(',', array_fill(0, count($cart), '?'));
- $stmt = $pdo->prepare("SELECT id, price, name FROM menu_items WHERE id IN ($placeholders)");
- $stmt->execute(array_keys($cart));
- $menuItems = $stmt->fetchAll();
+$placeholders = implode(',', array_fill(0, count($cart), '?'));
+$stmt = $pdo->prepare("SELECT id, price, name FROM menu_items WHERE id IN ($placeholders)");
+$stmt->execute(array_keys($cart));
+$menuItems = $stmt->fetchAll();
 
- $total = 0;
+$total = 0;
 foreach ($menuItems as $mi) {
     $total += $mi['price'] * $cart[$mi['id']];
 }
 
- $errors = [];
+$errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $payment = sanitize($_POST['payment_method'] ?? 'cash');
@@ -29,26 +28,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         try {
             $pdo->beginTransaction();
-
-            // Create order
             $stmt = $pdo->prepare("INSERT INTO orders (customer_id, total_amount, status, payment_method, notes) VALUES (?, ?, 'pending', ?, ?)");
             $stmt->execute([$_SESSION['customer_id'], $total, $payment, $notes]);
             $orderId = $pdo->lastInsertId();
 
-            // Insert order items
             $stmt = $pdo->prepare("INSERT INTO order_items (order_id, menu_item_id, quantity, price) VALUES (?, ?, ?, ?)");
             foreach ($menuItems as $mi) {
                 $stmt->execute([$orderId, $mi['id'], $cart[$mi['id']], $mi['price']]);
             }
 
             $pdo->commit();
-
-            // Clear cart
             unset($_SESSION['cart']);
-
             $_SESSION['last_order_id'] = $orderId;
-            redirect('order-success.php');
-
+            redirect('../order-success.php');
         } catch (Exception $e) {
             $pdo->rollBack();
             $errors[] = 'Something went wrong. Please try again.';
@@ -62,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout — Canteen Food Ordering</title>
-    <link rel="stylesheet" href="COS/assets/style.css">
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
@@ -71,6 +63,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <a href="index.php" class="nav-brand">
             <div class="nav-brand-icon">🍽</div> Canteen Food Ordering
         </a>
+        <ul class="nav-links">
+            <li><a href="index.php">Menu</a></li>
+            <li><a href="my-orders.php">My Orders</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        </ul>
     </div>
 </nav>
 
@@ -105,17 +102,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </label>
         </div>
 
-        <div id="esewa-qr" class="esewa-qr-section" style="display:none;">
-            <?php $esewaQrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode('esewa://pay?amount=' . $total); ?>
+        <div id="esewa-qr" style="display:none;">
             <div style="background:var(--card);border-radius:var(--radius);padding:20px;text-align:center;margin-bottom:20px;box-shadow:var(--shadow);">
                 <h4 style="margin:0 0 15px 0;">Scan to Pay with eSewa</h4>
-                <img src="COS/assets/esewa-qr.png" alt="eSewa QR Code" style="max-width:200px;width:100%;border-radius:8px;">
-                <p style="margin:15px 0 5px 0;font-size:0.9rem;color:var(--text-light);">Total Amount: <strong><?= formatPrice($total) ?></strong></p>
+                <img src="assets/esewa-qr.png" alt="eSewa QR" style="max-width:200px;width:100%;border-radius:8px;">
+                <p style="margin:15px 0 5px 0;font-size:0.9rem;color:var(--text-light);">Total: <strong><?= formatPrice($total) ?></strong></p>
                 <p style="margin:0;font-size:0.85rem;color:var(--text-light);">Send payment screenshot as proof</p>
             </div>
             <div class="form-group">
-                <label for="payment_proof">Payment Screenshot/Reference (optional)</label>
-                <input type="text" id="payment_proof" name="payment_proof" placeholder="Enter transaction ID or note">
+                <label for="payment_proof">Transaction ID (optional)</label>
+                <input type="text" id="payment_proof" name="payment_proof" placeholder="Enter transaction ID">
             </div>
         </div>
 

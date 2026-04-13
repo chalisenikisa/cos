@@ -1,18 +1,17 @@
-<?php require_once 'config.php'; ?>
+<?php require_once 'COS/config.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canteen Food Ordering — Order Fresh, Eat Well</title>
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="COS/assets/style.css">
     <style>
         .food-emoji { font-size: 3.5rem; line-height: 1; }
     </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar">
     <div class="nav-inner">
         <a href="index.php" class="nav-brand">
@@ -23,21 +22,20 @@
             <?php if (isLoggedIn()): ?>
                 <li><a href="my-orders.php">📋 My Orders</a></li>
                 <li>
-                    <a href="../cart.php" class="cart-btn">
+                    <button class="cart-btn" id="cart-toggle">
                         🛒 Cart <span class="cart-badge" style="display:none">0</span>
-                    </a>
+                    </button>
                 </li>
-                <li><a href="../logout.php" class="cart-btn">Logout</a></li>
+                <li><a href="logout.php" class="cart-btn">Logout</a></li>
             <?php else: ?>
-                <li><a href="login.php">Sign In</a></li>
+                <li><a href="COS/login.php">Sign In</a></li>
                 <li><a href="register.php" class="btn-primary btn-sm">Create Account</a></li>
-                <li><a href="admin/login.php" class="btn-primary btn-sm">Admin Panel</a></li>
+                <li><a href="COS/admin/login.php" class="btn-primary btn-sm">Admin Panel</a></li>
             <?php endif; ?>
         </ul>
     </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
     <div class="hero-text">
         <h1>Good Food,<br><span>Fast Service</span></h1>
@@ -51,7 +49,6 @@
     </div>
 </section>
 
-<!-- CATEGORY FILTER -->
 <div class="category-filter" id="menu">
     <button class="cat-btn active" data-category="all">All Items</button>
     <?php
@@ -62,14 +59,12 @@
     <?php endforeach; ?>
 </div>
 
-<!-- MENU GRID -->
 <section class="menu-section">
     <h2>Today's Menu</h2>
     <p class="subtitle">Freshly prepared daily by our kitchen staff</p>
 
     <div class="menu-grid">
         <?php
-        // Food emoji mapping by category
         $emojis = [
             'Rice Meals' => ['🍛','🍚','🥘','🍳','🥩'],
             'Noodles' => ['🍜','🍝','🥣'],
@@ -122,6 +117,6 @@
     &copy; <?= date('Y') ?> Canteen Food Ordering. Built for hungry students and staff.
 </footer>
 
-<script src="assets/appli.js"></script>
+<script src="COS/assets/appli.js"></script>
 </body>
 </html>

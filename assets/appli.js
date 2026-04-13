@@ -47,21 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-                const data = await res.json();
-                if (data.success) {
-                    showToast(`${itemName} added to cart`, 'success');
-                    updateCartBadge(data.cart_count);
-                    // Button animation
-                    this.style.transform = 'scale(1.3)';
-                    setTimeout(() => this.style.transform = '', 200);
-                } else {
-                    showToast(data.message || 'Error adding item', 'error');
-                }
-            } catch(e) {
-                showToast('Network error', 'error');
-            }
-        });
-    });
 
     // ---- Update cart badge ----
     function updateCartBadge(count) {
@@ -81,6 +66,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch(e) {}
     }
     loadCartCount();
+
+    // ---- Cart toggle button ----
+    const cartToggle = document.getElementById('cart-toggle');
+    if (cartToggle) {
+        cartToggle.addEventListener('click', () => {
+            window.location.href = 'cart.php';
+        });
+    }
 
     // ---- Category filter ----
     const catBtns = document.querySelectorAll('.cat-btn');

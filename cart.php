@@ -9,15 +9,13 @@ requireLogin();
 
 if (!empty($cart)) {
     $placeholders = implode(',', array_fill(0, count($cart), '?'));
-    $stmt = $pdo->query("
+    $stmt = $pdo->prepare("
         SELECT m.*, c.name AS category_name
         FROM menu_items m
         JOIN categories c ON m.category_id = c.id
         WHERE m.id IN ($placeholders)
     ");
-    // Build param array with keys matching the IDs
-    $params = array_values($cart);
-    $stmt->execute($params);
+    $stmt->execute(array_values($cart));
     $items = $stmt->fetchAll();
 
     // Emoji map
@@ -45,7 +43,7 @@ if (!empty($cart)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cart — Canteen Food Ordering</title>
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="COS/assets/style.css">
 </head>
 <body>
 
@@ -79,7 +77,7 @@ if (!empty($cart)) {
         <h3>Your cart is empty</h3>
         <p>Looks like you haven't added anything yet.</p>
         <br>
-        <a href="index.php" class="btn-primary">Browse Menu</a>
+        <a href="COS/index.php" class="btn-primary">Browse Menu</a>
     </div>
 </div>
 <?php else: ?>
@@ -116,8 +114,8 @@ if (!empty($cart)) {
             <span>Total</span>
             <span class="summary-total"><?= formatPrice($total) ?></span>
         </div>
-        <a href="checkout.php" class="btn-primary" style="width:100%;justify-content:center;margin-top:20px;padding:14px;">Proceed to Checkout</a>
-        <a href="index.php" class="btn-secondary" style="width:100%;justify-content:center;margin-top:10px;padding:12px;">Continue Shopping</a>
+        <a href="COS/checkout.php" class="btn-primary" style="width:100%;justify-content:center;margin-top:20px;padding:14px;">Proceed to Checkout</a>
+        <a href="COS/index.php" class="btn-secondary" style="width:100%;justify-content:center;margin-top:10px;padding:12px;">Continue Shopping</a>
     </div>
 </div>
 <?php endif; ?>
