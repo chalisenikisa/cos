@@ -14,6 +14,7 @@ if ($filter && in_array($filter, ['pending','preparing','ready','delivered','can
         ORDER BY o.created_at DESC
     ");
     $orders->execute([$filter]);
+    $orders = $orders->fetchAll();
 } else {
     $orders = $pdo->query("
         SELECT o.*, c.name AS customer_name
