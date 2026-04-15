@@ -35,6 +35,9 @@ function redirect($url) {
 }
 
 function isLoggedIn() {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
     return isset($_SESSION['customer_id']);
 }
 
@@ -43,6 +46,9 @@ function isAdminLoggedIn() {
 }
 
 function requireLogin() {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
     if (!isLoggedIn()) {
         $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
         redirect('login.php');

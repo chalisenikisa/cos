@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['customer_id'] = $user['id'];
             $_SESSION['customer_name'] = $user['name'];
 
-            $redirect = $_SESSION['redirect_after_login'] ?? 'index.php';
+            $redirect = $_SESSION['redirect_after_login'] ?? '../index.php';
             unset($_SESSION['redirect_after_login']);
             redirect($redirect);
         } else {

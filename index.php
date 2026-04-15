@@ -82,12 +82,12 @@ function getFoodEmoji($category, &$catMap, $emojiMap) {
     </div>
 </section>
 
-<?php if ($isLoggedIn): ?>
+<?php if ($isLoggedIn && !empty($recommendations)): ?>
 <div style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:30px;margin:20px 0;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.2);">
     <h2 style="margin:0 0 15px 0;font-size:28px;">🍴 Recommended For You</h2>
     <p style="margin:0;font-size:16px;opacity:0.9;">Personalized picks based on your preferences</p>
     <div style="margin-top:20px;display:flex;gap:15px;overflow-x:auto;padding:10px 0;">
-        <?php if (!empty($recommendations)): foreach ($recommendations as $rec): ?>
+        <?php foreach ($recommendations as $rec): ?>
             <?php if (!isset($rec['item'])) continue; $item = $rec['item']; ?>
             <div style="flex:0 0 260px;background:white;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
                 <div style="height:150px;background:linear-gradient(135deg,#f5f7fa,#c3cfe2);display:flex;align-items:center;justify-content:center;">
@@ -102,9 +102,7 @@ function getFoodEmoji($category, &$catMap, $emojiMap) {
                     </div>
                 </div>
             </div>
-        <?php endforeach; else: ?>
-            <p style="color:white;font-size:16px;">Start ordering to get recommendations!</p>
-        <?php endif; ?>
+        <?php endforeach; ?>
     </div>
 </div>
 <?php endif; ?>

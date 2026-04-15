@@ -1,10 +1,11 @@
 <?php
-require_once 'COS/config.php';
+ini_set('session.cookie_samesite', 'Lax');
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once '../COS/config.php';
 header('Content-Type: application/json');
 header('Cache-Control: no-cache, no-store, must-revalidate');
-
-ini_set('session.cookie_path', '/');
-ini_set('session.cookie_domain', '');
 
 if (!isLoggedIn()) {
     echo json_encode(['success' => false, 'message' => 'Please sign in first.']);
@@ -30,6 +31,8 @@ if (!$item || !$item['is_available']) {
 
 if (!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
 
+error_log("Add to cart: itemId=$itemId, cart=" . json_encode($_SESSION['cart']));
+
 if (isset($_SESSION['cart'][$itemId])) {
     if ($_SESSION['cart'][$itemId] >= 20) {
         echo json_encode(['success' => false, 'message' => 'Maximum 20 per item.']);
@@ -40,6 +43,10 @@ if (isset($_SESSION['cart'][$itemId])) {
     $_SESSION['cart'][$itemId] = 1;
 }
 
- $cartCount = array_sum($_SESSION['cart']);
+ session_write_close(); // Ensure session is written before returning
 
-echo json_encode(['success' => true, 'cart_count' => $cartCount]);
+error_log("Add to cart: itemId=$itemId, session_id=" . session_id() . ", cart=" . json_encode($_SESSION['cart']));
+
+$cartCount = array_sum($_SESSION['cart']);
+
+echo json_encode(['success' => true, 'session_id' => session_id(), 'cart' => $_SESSION['cart'], 'cart_count' => $cartCount]);

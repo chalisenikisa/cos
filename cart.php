@@ -1,21 +1,25 @@
-<?php
+<?php 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once 'COS/config.php';
 requireLogin();
 
 // Get cart from session
- $cart = $_SESSION['cart'] ?? [];
- $cartItems = [];
- $total = 0;
+$cart = $_SESSION['cart'] ?? [];
+$cartItems = [];
+$total = 0;
 
 if (!empty($cart)) {
-    $placeholders = implode(',', array_fill(0, count($cart), '?'));
+    $cartIds = array_keys($cart);
+    $placeholders = implode(',', array_fill(0, count($cartIds), '?'));
     $stmt = $pdo->prepare("
         SELECT m.*, c.name AS category_name
         FROM menu_items m
         JOIN categories c ON m.category_id = c.id
         WHERE m.id IN ($placeholders)
     ");
-    $stmt->execute(array_values($cart));
+    $stmt->execute($cartIds);
     $items = $stmt->fetchAll();
 
     // Emoji map
@@ -25,15 +29,17 @@ if (!empty($cart)) {
     ];
 
     foreach ($items as $item) {
-        $qty = $cart[$item['id']];
-        $itemTotal = $item['price'] * $qty;
-        $total += $itemTotal;
-        $cartItems[] = [
-            'item' => $item,
-            'qty' => $qty,
-            'total' => $itemTotal,
-            'emoji' => $emojis[$item['category_name']] ?? '🍽'
-        ];
+        $qty = $cart[$item['id']] ?? 0;
+        if ($qty > 0) {
+            $itemTotal = $item['price'] * $qty;
+            $total += $itemTotal;
+            $cartItems[] = [
+                'item' => $item,
+                'qty' => $qty,
+                'total' => $itemTotal,
+                'emoji' => $emojis[$item['category_name']] ?? '🍽'
+            ];
+        }
     }
 }
 ?>
