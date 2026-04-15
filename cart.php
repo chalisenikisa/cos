@@ -43,7 +43,7 @@ if (!empty($cart)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cart — Canteen Food Ordering</title>
-    <link rel="stylesheet" href="COS/assets/style.css">
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
@@ -121,6 +121,6 @@ if (!empty($cart)) {
 <?php endif; ?>
 
 <footer class="footer">&copy; <?= date('Y') ?> Canteen Food Ordering</footer>
-<script src="COS/assets/appli.js"></script>
+<script src="assets/appli.js"></script>
 </body>
 </html>

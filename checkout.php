@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout — Canteen Food Ordering</title>
-    <link rel="stylesheet" href="COS/assets/style.css">
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php $esewaQrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode('esewa://pay?amount=' . $total); ?>
             <div style="background:var(--card);border-radius:var(--radius);padding:20px;text-align:center;margin-bottom:20px;box-shadow:var(--shadow);">
                 <h4 style="margin:0 0 15px 0;">Scan to Pay with eSewa</h4>
-                <img src="COS/assets/esewa-qr.png" alt="eSewa QR Code" style="max-width:200px;width:100%;border-radius:8px;">
+                <img src="assets/esewa-qr.png" alt="eSewa QR Code" style="max-width:200px;width:100%;border-radius:8px;">
                 <p style="margin:15px 0 5px 0;font-size:0.9rem;color:var(--text-light);">Total Amount: <strong><?= formatPrice($total) ?></strong></p>
                 <p style="margin:0;font-size:0.85rem;color:var(--text-light);">Send payment screenshot as proof</p>
             </div>

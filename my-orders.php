@@ -37,7 +37,7 @@ if (!empty($orders)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Orders — Canteen Food Ordering</title>
-    <link rel="stylesheet" href="COS/assets/style.css">
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 

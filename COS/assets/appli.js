@@ -24,16 +24,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---- Add to cart (AJAX) ----
     document.querySelectorAll('.add-cart-btn').forEach(btn => {
-        btn.addEventListener('click', async function() {
+        btn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             const itemId = this.dataset.id;
             const itemName = this.dataset.name;
+            this.disabled = true;
+            this.style.opacity = '0.5';
             try {
-                const res = await fetch('api/add-to-cart.php', {
+                const res = await fetch('COS/api/add-to-cart.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ item_id: itemId })
                 });
-                const data = await res.json();
+                const text = await res.text();
+                let data;
+                try { data = JSON.parse(text); } catch { throw new Error('Invalid response: ' + text.substring(0,100)); }
                 if (data.success) {
                     showToast(`${itemName} added to cart`, 'success');
                     updateCartBadge(data.cart_count);
@@ -43,22 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     showToast(data.message || 'Error adding item', 'error');
                 }
             } catch(e) {
-                showToast('Network error', 'error');
-            }
-        });
-    });
-                const data = await res.json();
-                if (data.success) {
-                    showToast(`${itemName} added to cart`, 'success');
-                    updateCartBadge(data.cart_count);
-                    // Button animation
-                    this.style.transform = 'scale(1.3)';
-                    setTimeout(() => this.style.transform = '', 200);
-                } else {
-                    showToast(data.message || 'Error adding item', 'error');
-                }
-            } catch(e) {
-                showToast('Network error', 'error');
+                showToast('Network error: ' + e.message, 'error');
+            } finally {
+                this.disabled = false;
+                this.style.opacity = '1';
             }
         });
     });
@@ -75,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load initial cart count
     async function loadCartCount() {
         try {
-            const res = await fetch('api/cart-count.php');
+            const res = await fetch('COS/api/cart-count.php');
             const data = await res.json();
             updateCartBadge(data.count || 0);
         } catch(e) {}
@@ -85,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ---- Category filter ----
     const catBtns = document.querySelectorAll('.cat-btn');
     const foodCards = document.querySelectorAll('.food-card');
+    const recCards = document.querySelectorAll('.rec-card');
 
     catBtns.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -96,6 +91,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (cat === 'all' || card.dataset.category == cat) {
                     card.style.display = '';
                     card.style.animation = 'fadeUp 0.35s ease forwards';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            recCards.forEach(card => {
+                if (cat === 'all' || card.dataset.category == cat) {
+                    card.style.display = '';
                 } else {
                     card.style.display = 'none';
                 }
@@ -121,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function updateCartQty(itemId, delta) {
         try {
-            const res = await fetch('api/update-cart.php', {
+            const res = await fetch('COS/api/update-cart.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ item_id: itemId, delta: delta })
@@ -154,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const row = this.closest('.cart-item');
             const itemId = row.dataset.id;
             try {
-                const res = await fetch('api/remove-from-cart.php', {
+                const res = await fetch('COS/api/remove-from-cart.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ item_id: itemId })

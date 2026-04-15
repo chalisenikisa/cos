@@ -24,16 +24,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---- Add to cart (AJAX) ----
     document.querySelectorAll('.add-cart-btn').forEach(btn => {
-        btn.addEventListener('click', async function() {
+        btn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             const itemId = this.dataset.id;
             const itemName = this.dataset.name;
+            this.disabled = true;
+            this.style.opacity = '0.5';
             try {
                 const res = await fetch('api/add-to-cart.php', {
                     method: 'POST',
+                    credentials: 'same-origin',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ item_id: itemId })
                 });
-                const data = await res.json();
+                const text = await res.text();
+                let data;
+                try { data = JSON.parse(text); } catch { throw new Error('Invalid response: ' + text.substring(0,100)); }
                 if (data.success) {
                     showToast(`${itemName} added to cart`, 'success');
                     updateCartBadge(data.cart_count);
@@ -43,7 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     showToast(data.message || 'Error adding item', 'error');
                 }
             } catch(e) {
-                showToast('Network error', 'error');
+                showToast('Network error: ' + e.message, 'error');
+                console.error(e);
+            } finally {
+                this.disabled = false;
+                this.style.opacity = '1';
             }
         });
     });
@@ -60,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load initial cart count
     async function loadCartCount() {
         try {
-            const res = await fetch('api/cart-count.php');
+            const res = await fetch('api/cart-count.php', { credentials: 'same-origin' });
             const data = await res.json();
             updateCartBadge(data.count || 0);
         } catch(e) {}
@@ -83,10 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', function() {
             catBtns.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
-            const cat = this.dataset.category;
+            const cat = String(this.dataset.category);
 
             foodCards.forEach(card => {
-                if (cat === 'all' || card.dataset.category == cat) {
+                const cardCat = String(card.dataset.category);
+                if (cat === 'all' || cardCat === cat) {
                     card.style.display = '';
                     card.style.animation = 'fadeUp 0.35s ease forwards';
                 } else {

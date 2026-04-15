@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'COS/config.php';
 
 // Redirect if already logged 
 if (isLoggedIn()) redirect('index.php');

@@ -1,7 +1,16 @@
 <?php 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once 'COS/config.php';
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 $customerId = $_SESSION['customer_id'] ?? null;
+$isLoggedIn = isset($_SESSION['customer_id']);
+
 $recommendations = getRecommendations($pdo, $customerId, 6);
 
 $emojis = [
@@ -12,12 +21,11 @@ $emojis = [
     'Desserts' => ['🍮','🍧'],
     'Sandwiches' => ['🥪','🥪','🥪'],
 ];
-$catEmojiMap = [
-    'Rice Meals' => 0, 'Noodles' => 0, 'Snacks' => 0, 
-    'Beverages' => 0, 'Desserts' => 0, 'Sandwiches' => 0
-];
+$catEmojiMap = [];
+$menuCatEmojiMap = [];
 
 function getFoodEmoji($category, &$catMap, $emojiMap) {
+    if (!isset($catMap[$category])) $catMap[$category] = 0;
     $list = $emojiMap[$category] ?? ['🍽'];
     $emoji = $list[$catMap[$category] % count($list)];
     $catMap[$category]++;
@@ -30,7 +38,7 @@ function getFoodEmoji($category, &$catMap, $emojiMap) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canteen Food Ordering — Order Fresh, Eat Well</title>
-    <link rel="stylesheet" href="COS/assets/style.css">
+    <link rel="stylesheet" href="assets/style.css">
     <style>
         .food-emoji { font-size: 3.5rem; line-height: 1; }
     </style>
@@ -74,50 +82,31 @@ function getFoodEmoji($category, &$catMap, $emojiMap) {
     </div>
 </section>
 
-<?php if (!empty($recommendations)): ?>
-<section class="recommendations-section">
-    <div class="recs-header">
-        <div class="recs-title-area">
-            <h2>🍴 Recommended For You</h2>
-            <p class="subtitle">Personalized picks based on your preferences</p>
-        </div>
-    </div>
-    <div class="recs-scroll">
-        <?php foreach ($recommendations as $rec): ?>
-        <?php 
-            if (!isset($rec['item'])) continue;
-            $item = $rec['item'];
-            $emoji = getFoodEmoji($item['category_name'], $catEmojiMap, $emojis);
-            $reasonClass = [
-                'frequently_bought' => '💫',
-                'category_favorite' => '⭐', 
-                'popular' => '🔥',
-                'explore' => '✨'
-            ][$rec['type']] ?? '👉';
-        ?>
-        <div class="rec-card" data-category="<?= $item['category_id'] ?>">
-            <div class="rec-badge" title="<?= $rec['reason'] ?>"><?= $reasonClass ?></div>
-            <div class="rec-card-img">
-                <span class="food-emoji"><?= $emoji ?></span>
-                <span class="food-card-category"><?= sanitize($item['category_name']) ?></span>
-            </div>
-            <div class="rec-card-body">
-                <h3><?= sanitize($item['name']) ?></h3>
-                <p class="desc"><?= sanitize($item['description']) ?></p>
-                <div class="rec-card-footer">
-                    <span class="food-price"><?= formatPrice($item['price']) ?></span>
-                    <button class="add-cart-btn" data-id="<?= $item['id'] ?>" data-name="<?= sanitize($item['name']) ?>" title="Add to cart">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                    </button>
+<?php if ($isLoggedIn): ?>
+<div style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:30px;margin:20px 0;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.2);">
+    <h2 style="margin:0 0 15px 0;font-size:28px;">🍴 Recommended For You</h2>
+    <p style="margin:0;font-size:16px;opacity:0.9;">Personalized picks based on your preferences</p>
+    <div style="margin-top:20px;display:flex;gap:15px;overflow-x:auto;padding:10px 0;">
+        <?php if (!empty($recommendations)): foreach ($recommendations as $rec): ?>
+            <?php if (!isset($rec['item'])) continue; $item = $rec['item']; ?>
+            <div style="flex:0 0 260px;background:white;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                <div style="height:150px;background:linear-gradient(135deg,#f5f7fa,#c3cfe2);display:flex;align-items:center;justify-content:center;">
+                    <span style="font-size:60px;"><?= ['🍛','🍜','🥟','🧋','🍮','🥪'][array_rand(['🍛','🍜','🥟','🧋','🍮','🥪'])] ?></span>
+                </div>
+                <div style="padding:15px;">
+                    <h3 style="margin:0 0 8px 0;font-size:18px;color:#333;"><?= sanitize($item['name']) ?></h3>
+                    <p style="margin:0 0 12px 0;font-size:14px;color:#666;"><?= sanitize($item['description']) ?></p>
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <span style="font-weight:bold;font-size:20px;color:#E85D26;"><?= formatPrice($item['price']) ?></span>
+                        <button class="add-cart-btn" data-id="<?= $item['id'] ?>" data-name="<?= sanitize($item['name']) ?>" style="background:#E85D26;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;">+ Add</button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <?php endforeach; ?>
+        <?php endforeach; else: ?>
+            <p style="color:white;font-size:16px;">Start ordering to get recommendations!</p>
+        <?php endif; ?>
     </div>
-</section>
+</div>
 <?php endif; ?>
 
 <div class="category-filter" id="menu">
@@ -145,10 +134,6 @@ function getFoodEmoji($category, &$catMap, $emojiMap) {
             ORDER BY c.name, m.name
         ")->fetchAll();
 
-        $menuCatEmojiMap = [
-            'Rice Meals' => 0, 'Noodles' => 0, 'Snacks' => 0, 
-            'Beverages' => 0, 'Desserts' => 0, 'Sandwiches' => 0
-        ];
         foreach ($items as $item):
             $cat = $item['category_name'];
             $emoji = getFoodEmoji($cat, $menuCatEmojiMap, $emojis);
@@ -180,6 +165,6 @@ function getFoodEmoji($category, &$catMap, $emojiMap) {
     &copy; <?= date('Y') ?> Canteen Food Ordering. Built for hungry students and staff.
 </footer>
 
-<script src="COS/assets/appli.js"></script>
+<script src="assets/appli.js"></script>
 </body>
 </html>

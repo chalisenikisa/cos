@@ -1,6 +1,10 @@
 <?php
 require_once 'COS/config.php';
 header('Content-Type: application/json');
+header('Cache-Control: no-cache, no-store, must-revalidate');
+
+ini_set('session.cookie_path', '/');
+ini_set('session.cookie_domain', '');
 
 if (!isLoggedIn()) {
     echo json_encode(['success' => false, 'message' => 'Please sign in first.']);
