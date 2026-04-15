@@ -240,6 +240,160 @@ img {
     font-size: 0.82rem;
 }
 
+/* ---- RECOMMENDATIONS SECTION ---- */
+.recommendations-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+}
+
+.recs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.recs-title-area h2 {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    margin-bottom: 4px;
+}
+
+.recs-scroll {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.recs-scroll::-webkit-scrollbar {
+    height: 6px;
+}
+
+.recs-scroll::-webkit-scrollbar-track {
+    background: var(--border);
+    border-radius: 10px;
+}
+
+.recs-scroll::-webkit-scrollbar-thumb {
+    background: var(--muted);
+    border-radius: 10px;
+}
+
+.rec-card {
+    flex: 0 0 260px;
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.25s, box-shadow 0.25s;
+    scroll-snap-align: start;
+    position: relative;
+    border: 2px solid transparent;
+}
+
+.rec-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent);
+}
+
+.rec-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--card);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    box-shadow: var(--shadow);
+    z-index: 2;
+}
+
+.rec-card-img {
+    height: 150px;
+    background: linear-gradient(135deg, #FDE8D8, #F5C6A8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.rec-card-body {
+    padding: 14px;
+}
+
+.rec-card-body h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rec-card-body .desc {
+    color: var(--muted);
+    font-size: 0.78rem;
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 2.6em;
+}
+
+.rec-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.rec-card-footer .food-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.rec-card-footer .add-cart-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.rec-card-footer .add-cart-btn:hover {
+    background: var(--accent-dark);
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .rec-card {
+        flex: 0 0 220px;
+    }
+    .rec-card-img {
+        height: 130px;
+        font-size: 2.5rem;
+    }
+}
+
 /* ---- HERO SECTION ---- */
 .hero {
     max-width: 1200px;

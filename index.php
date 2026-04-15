@@ -1,4 +1,29 @@
-<?php require_once 'COS/config.php'; ?>
+<?php 
+require_once 'COS/config.php';
+
+$customerId = $_SESSION['customer_id'] ?? null;
+$recommendations = getRecommendations($pdo, $customerId, 6);
+
+$emojis = [
+    'Rice Meals' => ['🍛','🍚','🥘','🍳','🥩'],
+    'Noodles' => ['🍜','🍝','🥣'],
+    'Snacks' => ['🥟','🍟','🍗','🧆'],
+    'Beverages' => ['🧊','🥥','☕','🧋'],
+    'Desserts' => ['🍮','🍧'],
+    'Sandwiches' => ['🥪','🥪','🥪'],
+];
+$catEmojiMap = [
+    'Rice Meals' => 0, 'Noodles' => 0, 'Snacks' => 0, 
+    'Beverages' => 0, 'Desserts' => 0, 'Sandwiches' => 0
+];
+
+function getFoodEmoji($category, &$catMap, $emojiMap) {
+    $list = $emojiMap[$category] ?? ['🍽'];
+    $emoji = $list[$catMap[$category] % count($list)];
+    $catMap[$category]++;
+    return $emoji;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,6 +74,52 @@
     </div>
 </section>
 
+<?php if (!empty($recommendations)): ?>
+<section class="recommendations-section">
+    <div class="recs-header">
+        <div class="recs-title-area">
+            <h2>🍴 Recommended For You</h2>
+            <p class="subtitle">Personalized picks based on your preferences</p>
+        </div>
+    </div>
+    <div class="recs-scroll">
+        <?php foreach ($recommendations as $rec): ?>
+        <?php 
+            if (!isset($rec['item'])) continue;
+            $item = $rec['item'];
+            $emoji = getFoodEmoji($item['category_name'], $catEmojiMap, $emojis);
+            $reasonClass = [
+                'frequently_bought' => '💫',
+                'category_favorite' => '⭐', 
+                'popular' => '🔥',
+                'explore' => '✨'
+            ][$rec['type']] ?? '👉';
+        ?>
+        <div class="rec-card" data-category="<?= $item['category_id'] ?>">
+            <div class="rec-badge" title="<?= $rec['reason'] ?>"><?= $reasonClass ?></div>
+            <div class="rec-card-img">
+                <span class="food-emoji"><?= $emoji ?></span>
+                <span class="food-card-category"><?= sanitize($item['category_name']) ?></span>
+            </div>
+            <div class="rec-card-body">
+                <h3><?= sanitize($item['name']) ?></h3>
+                <p class="desc"><?= sanitize($item['description']) ?></p>
+                <div class="rec-card-footer">
+                    <span class="food-price"><?= formatPrice($item['price']) ?></span>
+                    <button class="add-cart-btn" data-id="<?= $item['id'] ?>" data-name="<?= sanitize($item['name']) ?>" title="Add to cart">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</section>
+<?php endif; ?>
+
 <div class="category-filter" id="menu">
     <button class="cat-btn active" data-category="all">All Items</button>
     <?php
@@ -65,14 +136,6 @@
 
     <div class="menu-grid">
         <?php
-        $emojis = [
-            'Rice Meals' => ['🍛','🍚','🥘','🍳','🥩'],
-            'Noodles' => ['🍜','🍝','🥣'],
-            'Snacks' => ['🥟','🍟','🍗','🧆'],
-            'Beverages' => ['🧊','🥥','☕','🧋'],
-            'Desserts' => ['🍮','🍧'],
-            'Sandwiches' => ['🥪','🥪','🥪'],
-        ];
 
         $items = $pdo->query("
             SELECT m.*, c.name AS category_name
@@ -82,13 +145,13 @@
             ORDER BY c.name, m.name
         ")->fetchAll();
 
-        $catEmojiIndex = [];
+        $menuCatEmojiMap = [
+            'Rice Meals' => 0, 'Noodles' => 0, 'Snacks' => 0, 
+            'Beverages' => 0, 'Desserts' => 0, 'Sandwiches' => 0
+        ];
         foreach ($items as $item):
             $cat = $item['category_name'];
-            if (!isset($catEmojiIndex[$cat])) $catEmojiIndex[$cat] = 0;
-            $emojiList = $emojis[$cat] ?? ['🍽'];
-            $emoji = $emojiList[$catEmojiIndex[$cat] % count($emojiList)];
-            $catEmojiIndex[$cat]++;
+            $emoji = getFoodEmoji($cat, $menuCatEmojiMap, $emojis);
         ?>
         <div class="food-card <?= $item['is_available'] ? '' : 'unavailable' ?>" data-category="<?= $item['category_id'] ?>">
             <div class="food-card-img">
