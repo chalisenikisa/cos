@@ -21,9 +21,22 @@ foreach ($menuItems as $mi) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $payment = sanitize($_POST['payment_method'] ?? 'cash');
     $notes = sanitize($_POST['notes'] ?? '');
+    $esewaTransactionId = sanitize($_POST['esewa_transaction_id'] ?? '');
+    $esewaPhone = sanitize($_POST['esewa_phone'] ?? '');
 
     if (!in_array($payment, ['cash', 'gcash', 'card', 'esewa'])) {
         $errors[] = 'Invalid payment method.';
+    }
+
+    if ($payment === 'esewa') {
+        if (empty($esewaTransactionId)) {
+            $errors[] = 'Transaction ID is required for eSewa payments.';
+        }
+        if (empty($esewaPhone)) {
+            $errors[] = 'Phone number is required for eSewa payments.';
+        } elseif (!preg_match('/^[0-9]{10}$/', $esewaPhone)) {
+            $errors[] = 'Please enter a valid 10-digit phone number.';
+        }
     }
 
     if (empty($errors)) {
@@ -31,8 +44,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->beginTransaction();
 
             // Create order
+            $orderNotes = $notes;
+            if ($payment === 'esewa' && (!empty($esewaTransactionId) || !empty($esewaPhone))) {
+                $esewaDetails = [];
+                if (!empty($esewaTransactionId)) $esewaDetails[] = "eSewa Transaction ID: " . $esewaTransactionId;
+                if (!empty($esewaPhone)) $esewaDetails[] = "eSewa Phone: " . $esewaPhone;
+                $orderNotes = implode(" | ", $esewaDetails) . ($notes ? "\n" . $notes : '');
+            }
             $stmt = $pdo->prepare("INSERT INTO orders (customer_id, total_amount, status, payment_method, notes) VALUES (?, ?, 'pending', ?, ?)");
-            $stmt->execute([$_SESSION['customer_id'], $total, $payment, $notes]);
+            $stmt->execute([$_SESSION['customer_id'], $total, $payment, $orderNotes]);
             $orderId = $pdo->lastInsertId();
 
             // Insert order items
@@ -105,8 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </label>
         </div>
 
-        <div id="esewa-qr" class="esewa-qr-section" style="display:none;">
-            <?php $esewaQrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode('esewa://pay?amount=' . $total); ?>
+        <div id="esewa-fields" class="esewa-fields-section" style="display:none;">
             <div style="background:var(--card);border-radius:var(--radius);padding:20px;text-align:center;margin-bottom:20px;box-shadow:var(--shadow);">
                 <h4 style="margin:0 0 15px 0;">Scan to Pay with eSewa</h4>
                 <img src="assets/esewa-qr.png" alt="eSewa QR Code" style="max-width:200px;width:100%;border-radius:8px;">
@@ -114,8 +133,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p style="margin:0;font-size:0.85rem;color:var(--text-light);">Send payment screenshot as proof</p>
             </div>
             <div class="form-group">
-                <label for="payment_proof">Payment Screenshot/Reference (optional)</label>
-                <input type="text" id="payment_proof" name="payment_proof" placeholder="Enter transaction ID or note">
+                <label for="esewa_transaction_id">Transaction ID <span style="color:red;">*</span></label>
+                <input type="text" id="esewa_transaction_id" name="esewa_transaction_id" placeholder="Enter eSewa Transaction ID" required>
+            </div>
+            <div class="form-group">
+                <label for="esewa_phone">Phone Number <span style="color:red;">*</span></label>
+                <input type="tel" id="esewa_phone" name="esewa_phone" placeholder="Enter your phone number (9800000000)" pattern="[0-9]{10}" required>
             </div>
         </div>
 
@@ -131,8 +154,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:1rem;">
             Place Order — <?= formatPrice($total) ?>
         </button>
-        <a href="cart.php" class="btn-secondary" style="display:block;text-align:center;margin-top:10px;padding:12px;">Back to Cart</a>
     </form>
+    <a href="cart.php" class="btn-secondary" style="display:block;text-align:center;margin-top:10px;padding:12px;">Back to Cart</a>
 </div>
 
 <footer class="footer">&copy; <?= date('Y') ?> Canteen Food Ordering</footer>
@@ -141,8 +164,8 @@ document.querySelectorAll('input[name="payment_method"]').forEach(function(radio
     radio.addEventListener('change', function() {
         document.querySelectorAll('.payment-option').forEach(function(opt) { opt.classList.remove('selected'); });
         this.closest('.payment-option').classList.add('selected');
-        var qrSection = document.getElementById('esewa-qr');
-        qrSection.style.display = this.value === 'esewa' ? 'block' : 'none';
+        var esewaSection = document.getElementById('esewa-fields');
+        esewaSection.style.display = this.value === 'esewa' ? 'block' : 'none';
     });
 });
 </script>
