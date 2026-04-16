@@ -1,5 +1,5 @@
 <?php
-require_once 'COS/config.php';
+require_once '../COS/config.php';
 header('Content-Type: application/json');
 
  $input = json_decode(file_get_contents('php://input'), true);
