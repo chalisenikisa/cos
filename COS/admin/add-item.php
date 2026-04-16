@@ -11,16 +11,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = sanitize($_POST['name'] ?? '');
     $desc = sanitize($_POST['description'] ?? '');
     $price = floatval($_POST['price'] ?? 0);
+    $stock = intval($_POST['stock_quantity'] ?? 100);
     $available = isset($_POST['is_available']) ? 1 : 0;
     $dayOfWeek = isset($_POST['day_of_week']) ? implode(',', $_POST['day_of_week']) : null;
 
     if ($catId <= 0) $errors[] = 'Select a category.';
     if (empty($name)) $errors[] = 'Item name is required.';
     if ($price <= 0) $errors[] = 'Price must be greater than zero.';
+    if ($stock < 0) $errors[] = 'Stock quantity cannot be negative.';
 
     if (empty($errors)) {
-        $stmt = $pdo->prepare("INSERT INTO menu_items (category_id, name, description, price, is_available, day_of_week) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$catId, $name, $desc, $price, $available, $dayOfWeek]);
+        $stmt = $pdo->prepare("INSERT INTO menu_items (category_id, name, description, price, is_available, stock_quantity, day_of_week) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$catId, $name, $desc, $price, $available, $stock, $dayOfWeek]);
+        
+        $newItemId = $pdo->lastInsertId();
+        if ($stock <= 10 && $stock > 0) {
+            $notifStmt = $pdo->prepare("INSERT INTO notifications (type, title, message, item_id) VALUES ('low_stock', ?, ?, ?)");
+            $notifStmt->execute(['Low Stock Alert', $name . ' is running low (' . $stock . ' units)', $newItemId]);
+        } elseif ($stock == 0) {
+            $notifStmt = $pdo->prepare("INSERT INTO notifications (type, title, message, item_id) VALUES ('out_of_stock', ?, ?, ?)");
+            $notifStmt->execute(['Out of Stock', $name . ' is out of stock!', $newItemId]);
+        }
+        
         flash('success', 'Item added successfully.');
         redirect('manage-menu.php');
     }
@@ -92,12 +104,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label for="price">Price (₱)</label>
                         <input type="number" id="price" name="price" step="0.01" min="0.01" value="<?= $_POST['price'] ?? '' ?>" required>
                     </div>
-                    <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:4px;">
-                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-                            <input type="checkbox" name="is_available" value="1" checked style="width:18px;height:18px;">
-                            Available
-                        </label>
+                    <div class="form-group">
+                        <label for="stock_quantity">Stock Quantity</label>
+                        <input type="number" id="stock_quantity" name="stock_quantity" min="0" value="<?= $_POST['stock_quantity'] ?? '100' ?>">
                     </div>
+                </div>
+                <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:4px;">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                        <input type="checkbox" name="is_available" value="1" checked style="width:18px;height:18px;">
+                        Available
+                    </label>
                 </div>
                 <div class="form-group">
                     <label for="day_of_week">Available Days (leave empty for all days)</label>

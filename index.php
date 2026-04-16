@@ -82,29 +82,80 @@ function getFoodEmoji($category, &$catMap, $emojiMap) {
     </div>
 </section>
 
-<?php if ($isLoggedIn && !empty($recommendations)): ?>
-<div style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:30px;margin:20px 0;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.2);">
-    <h2 style="margin:0 0 15px 0;font-size:28px;">🍴 Recommended For You</h2>
-    <p style="margin:0;font-size:16px;opacity:0.9;">Personalized picks based on your preferences</p>
-    <div style="margin-top:20px;display:flex;gap:15px;overflow-x:auto;padding:10px 0;">
-        <?php foreach ($recommendations as $rec): ?>
-            <?php if (!isset($rec['item'])) continue; $item = $rec['item']; ?>
-            <div style="flex:0 0 260px;background:white;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                <div style="height:150px;background:linear-gradient(135deg,#f5f7fa,#c3cfe2);display:flex;align-items:center;justify-content:center;">
-                    <span style="font-size:60px;"><?= ['🍛','🍜','🥟','🧋','🍮','🥪'][array_rand(['🍛','🍜','🥟','🧋','🍮','🥪'])] ?></span>
+<?php if ($isLoggedIn): ?>
+<?php 
+$mostPopular = array_filter($recommendations, fn($r) => $r['type'] === 'most_popular');
+$recommended = array_filter($recommendations, fn($r) => $r['type'] === 'recommended');
+$recEmojiMap = ['Momo' => '🥟', 'Chowmein' => '🍜', 'Rice' => '🍛', 'Beverages' => '🧋', 'Snacks' => '🥪', 'Sweets' => '🍮'];
+$recEmojis = ['🍛','🍜','🥟','🧋','🍮','🥪','🍕','🍔','🌮','🥗'];
+?>
+<?php if (!empty($mostPopular)): ?>
+<div style="background:linear-gradient(135deg,#ff6b6b,#ee5a24);color:white;padding:25px;margin:20px 0;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.2);">
+    <h2 style="margin:0 0 10px 0;font-size:24px;">🔥 Most Popular</h2>
+    <p style="margin:0;font-size:14px;opacity:0.9;">Top ordered items by everyone</p>
+    <div style="margin-top:15px;display:flex;gap:15px;overflow-x:auto;padding:10px 0;">
+        <?php foreach ($mostPopular as $rec): ?>
+            <?php if (!isset($rec['item'])) continue; 
+                $item = $rec['item'];
+                $cat = $item['category_name'] ?? '';
+                $emoji = $recEmojiMap[$cat] ?? ($recEmojis[array_rand($recEmojis)]);
+                $imgPath = 'COS/uploads/' . $item['image'];
+                $hasImage = $item['image'] && file_exists($imgPath);
+            ?>
+            <div style="flex:0 0 220px;background:white;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                <div style="height:140px;background:linear-gradient(135deg,#f5f7fa,#c3cfe2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+                    <?php if ($hasImage): ?>
+                        <img src="<?= $imgPath ?>" alt="<?= sanitize($item['name']) ?>" style="width:100%;height:100%;object-fit:cover;">
+                    <?php else: ?>
+                        <span style="font-size:60px;"><?= $emoji ?></span>
+                    <?php endif; ?>
                 </div>
-                <div style="padding:15px;">
-                    <h3 style="margin:0 0 8px 0;font-size:18px;color:#333;"><?= sanitize($item['name']) ?></h3>
-                    <p style="margin:0 0 12px 0;font-size:14px;color:#666;"><?= sanitize($item['description']) ?></p>
+                <div style="padding:12px;">
+                    <h3 style="margin:0 0 5px 0;font-size:16px;color:#333;"><?= sanitize($item['name']) ?></h3>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <span style="font-weight:bold;font-size:20px;color:#E85D26;"><?= formatPrice($item['price']) ?></span>
-                        <button class="add-cart-btn" data-id="<?= $item['id'] ?>" data-name="<?= sanitize($item['name']) ?>" style="background:#E85D26;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;">+ Add</button>
+                        <span style="font-weight:bold;font-size:18px;color:#E85D26;"><?= formatPrice($item['price']) ?></span>
+                        <button class="add-cart-btn" data-id="<?= $item['id'] ?>" data-name="<?= sanitize($item['name']) ?>" style="background:#E85D26;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:12px;">+ Add</button>
                     </div>
                 </div>
             </div>
         <?php endforeach; ?>
     </div>
 </div>
+<?php endif; ?>
+
+<?php if (!empty($recommended)): ?>
+<div style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:25px;margin:20px 0;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.2);">
+    <h2 style="margin:0 0 10px 0;font-size:24px;">🍴 Recommended For You</h2>
+    <p style="margin:0;font-size:14px;opacity:0.9;">Based on popular categories</p>
+    <div style="margin-top:15px;display:flex;gap:15px;overflow-x:auto;padding:10px 0;">
+        <?php foreach ($recommended as $rec): ?>
+            <?php if (!isset($rec['item'])) continue; 
+                $item = $rec['item'];
+                $cat = $item['category_name'] ?? '';
+                $emoji = $recEmojiMap[$cat] ?? ($recEmojis[array_rand($recEmojis)]);
+                $imgPath = 'COS/uploads/' . $item['image'];
+                $hasImage = $item['image'] && file_exists($imgPath);
+            ?>
+            <div style="flex:0 0 220px;background:white;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                <div style="height:140px;background:linear-gradient(135deg,#f5f7fa,#c3cfe2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+                    <?php if ($hasImage): ?>
+                        <img src="<?= $imgPath ?>" alt="<?= sanitize($item['name']) ?>" style="width:100%;height:100%;object-fit:cover;">
+                    <?php else: ?>
+                        <span style="font-size:60px;"><?= $emoji ?></span>
+                    <?php endif; ?>
+                </div>
+                <div style="padding:12px;">
+                    <h3 style="margin:0 0 5px 0;font-size:16px;color:#333;"><?= sanitize($item['name']) ?></h3>
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <span style="font-weight:bold;font-size:18px;color:#E85D26;"><?= formatPrice($item['price']) ?></span>
+                        <button class="add-cart-btn" data-id="<?= $item['id'] ?>" data-name="<?= sanitize($item['name']) ?>" style="background:#E85D26;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:12px;">+ Add</button>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<?php endif; ?>
 <?php endif; ?>
 
 <div class="category-filter" id="menu">

@@ -8,6 +8,24 @@ requireAdmin();
  $todayOrders = $pdo->query("SELECT COUNT(*) FROM orders WHERE DATE(created_at) = CURDATE()")->fetchColumn();
  $totalItems = $pdo->query("SELECT COUNT(*) FROM menu_items")->fetchColumn();
 
+ $lowStockThreshold = 10;
+ $lowStockCount = 0;
+ $unreadNotifications = 0;
+ $recentNotifications = [];
+
+ $columns = $pdo->query("SHOW COLUMNS FROM menu_items LIKE 'stock_quantity'")->fetch();
+ if ($columns) {
+     $lowStockCount = $pdo->prepare("SELECT COUNT(*) FROM menu_items WHERE stock_quantity IS NOT NULL AND stock_quantity <= ?");
+     $lowStockCount->execute([$lowStockThreshold]);
+     $lowStockCount = $lowStockCount->fetchColumn();
+ }
+
+ $tables = $pdo->query("SHOW TABLES LIKE 'notifications'")->fetch();
+ if ($tables) {
+     $unreadNotifications = $pdo->query("SELECT COUNT(*) FROM notifications WHERE is_read = 0")->fetchColumn();
+     $recentNotifications = $pdo->query("SELECT * FROM notifications WHERE is_read = 0 ORDER BY created_at DESC LIMIT 5")->fetchAll();
+ }
+
 // Recent orders
  $recentOrders = $pdo->query("
     SELECT o.*, c.name AS customer_name
@@ -53,6 +71,32 @@ requireAdmin();
 
     <main class="admin-content">
         <h1 style="font-family:var(--font-display);font-size:1.8rem;margin-bottom:24px;">Dashboard</h1>
+
+        <?php if ($unreadNotifications > 0): ?>
+        <div style="background:#fff3e0;border:1px solid #ff9800;border-radius:var(--radius);padding:16px 20px;margin-bottom:24px;box-shadow:0 2px 8px rgba(255,152,0,0.15);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <h4 style="margin:0;color:#e65100;">🔔 Notifications (<?= $unreadNotifications ?>)</h4>
+                <button onclick="markAllNotificationsRead()" style="background:#ff9800;color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:0.85rem;">Mark all read</button>
+            </div>
+            <?php foreach ($recentNotifications as $notif): ?>
+            <div style="background:#fff;padding:10px 14px;border-radius:6px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;border-left:3px solid <?= $notif['type'] === 'low_stock' ? '#ff9800' : ($notif['type'] === 'out_of_stock' ? '#f44336' : '#2196f3') ?>;">
+                <div>
+                    <strong style="color:#333;"><?= sanitize($notif['title']) ?></strong>
+                    <p style="margin:4px 0 0 0;color:#666;font-size:0.9rem;"><?= sanitize($notif['message']) ?></p>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <?php if ($notif['item_id']): ?>
+                    <a href="edit-item.php?id=<?= $notif['item_id'] ?>" style="background:#4caf50;color:#fff;text-decoration:none;padding:4px 10px;border-radius:4px;font-size:0.8rem;">Restock</a>
+                    <?php endif; ?>
+                    <button onclick="dismissNotification(<?= $notif['id'] ?>)" style="background:none;border:none;color:#999;cursor:pointer;font-size:1.1rem;">&times;</button>
+                </div>
+            </div>
+            <?php endforeach; ?>
+            <?php if ($unreadNotifications > 5): ?>
+            <a href="notifications.php" style="color:#ff9800;text-decoration:none;font-size:0.9rem;">View all <?= $unreadNotifications ?> notifications →</a>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
 
         <!-- Stats -->
         <div class="stat-grid">
@@ -110,5 +154,38 @@ requireAdmin();
     </main>
 </div>
 
+<script>
+async function markAllNotificationsRead() {
+    try {
+        const res = await fetch('../api/notifications.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'mark_all_read' })
+        });
+        const data = await res.json();
+        if (data.success) {
+            location.reload();
+        }
+    } catch(e) {
+        alert('Error: ' + e.message);
+    }
+}
+
+async function dismissNotification(id) {
+    try {
+        const res = await fetch('../api/notifications.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'dismiss', id: id })
+        });
+        const data = await res.json();
+        if (data.success) {
+            location.reload();
+        }
+    } catch(e) {
+        alert('Error: ' + e.message);
+    }
+}
+</script>
 </body>
 </html>

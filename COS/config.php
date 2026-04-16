@@ -82,25 +82,71 @@ function formatPrice($price) {
 function getRecommendations($pdo, $customerId = null, $limit = 6) {
     $recommendations = [];
     
-    // Simple: just get available items for now
+    $halfLimit = (int)($limit / 2);
+    if ($halfLimit < 1) $halfLimit = 1;
+    
     $stmt = $pdo->prepare("
-        SELECT m.*, c.name AS category_name
+        SELECT m.*, c.name AS category_name,
+               COUNT(oi.id) as order_count
         FROM menu_items m
         JOIN categories c ON m.category_id = c.id
+        LEFT JOIN order_items oi ON oi.menu_item_id = m.id
+        LEFT JOIN orders o ON o.id = oi.order_id AND o.status != 'cancelled'
         WHERE m.is_available = 1
-        ORDER BY RAND()
+        GROUP BY m.id
+        ORDER BY order_count DESC, m.name ASC
         LIMIT ?
     ");
-    $stmt->bindValue(1, $limit, PDO::PARAM_INT);
+    $stmt->bindValue(1, $halfLimit, PDO::PARAM_INT);
     $stmt->execute();
-    $items = $stmt->fetchAll();
+    $mostOrdered = $stmt->fetchAll();
     
-    $reason = "Recommended for you";
-    
-    foreach ($items as $item) {
+    foreach ($mostOrdered as $item) {
         $recommendations[] = [
-            'type' => 'popular',
-            'reason' => $reason,
+            'type' => 'most_popular',
+            'reason' => 'Most Popular',
+            'item' => $item
+        ];
+    }
+    
+    if ($customerId) {
+        $stmt = $pdo->prepare("
+            SELECT m.*, c.name AS category_name,
+                   COUNT(oi.id) as category_order_count
+            FROM menu_items m
+            JOIN categories c ON m.category_id = c.id
+            LEFT JOIN order_items oi ON oi.menu_item_id = m.id
+            LEFT JOIN orders o ON o.id = oi.order_id AND o.status != 'cancelled'
+            WHERE m.is_available = 1
+              AND m.id NOT IN (
+                  SELECT DISTINCT oi2.menu_item_id 
+                  FROM order_items oi2 
+                  JOIN orders o2 ON o2.id = oi2.order_id 
+                  WHERE o2.customer_id = ? AND o2.status != 'cancelled'
+              )
+            GROUP BY m.id
+            ORDER BY category_order_count DESC, m.name ASC
+            LIMIT ?
+        ");
+        $stmt->execute([$customerId, $halfLimit]);
+    } else {
+        $stmt = $pdo->prepare("
+            SELECT m.*, c.name AS category_name
+            FROM menu_items m
+            JOIN categories c ON m.category_id = c.id
+            WHERE m.is_available = 1
+            ORDER BY RAND()
+            LIMIT ?
+        ");
+        $stmt->bindValue(1, $halfLimit, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+    $recommended = $stmt->fetchAll();
+    
+    foreach ($recommended as $item) {
+        $recommendations[] = [
+            'type' => 'recommended',
+            'reason' => 'Recommended for you',
             'item' => $item
         ];
     }

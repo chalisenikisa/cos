@@ -32,6 +32,13 @@ unset($_SESSION['last_order_id']);
 <div class="success-container">
     <div class="success-icon">✓</div>
     <h1 style="font-family:var(--font-display);font-size:2rem;margin-bottom:8px;">Order Placed!</h1>
+    
+    <div id="order-confirmation-notification" style="background:#e8f5e9;border:1px solid #4caf50;border-radius:var(--radius);padding:16px 20px;margin-bottom:24px;text-align:center;box-shadow:0 2px 8px rgba(76,175,80,0.15);">
+        <p style="margin:0;font-size:1.1rem;color:#2e7d32;font-weight:600;">
+            Order #<?= str_pad($orderId, 5, '0', STR_PAD_LEFT) ?> confirmed. <a href="my-orders.php" style="color:#1976d2;text-decoration:underline;">View in My Orders</a>
+        </p>
+    </div>
+    
     <p style="color:var(--muted);margin-bottom:24px;">
         Your order <strong>#<?= str_pad($orderId, 5, '0', STR_PAD_LEFT) ?></strong> has been received and is being prepared.
     </p>
