@@ -108,14 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="radio" name="payment_method" value="cash" checked>
                 💵 Cash
             </label>
-            <label class="payment-option">
-                <input type="radio" name="payment_method" value="gcash">
-                📱 GCash
-            </label>
-            <label class="payment-option">
-                <input type="radio" name="payment_method" value="card">
-                💳 Card
-            </label>
+
             <label class="payment-option">
                 <input type="radio" name="payment_method" value="esewa">
                 📲 eSewa
